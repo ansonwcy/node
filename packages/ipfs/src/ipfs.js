@@ -27,32 +27,32 @@ const { convertCompilerOptionsFromJson } = require('typescript');
   const hidden = { writable: false, enumerable: false, configurable: false }
 
   //https://github.com/multiformats/js-multiformats/blob/bb14a29dd823a517ef0c6c741d265e022591d831/src/bases/base.js#L135
-  class ComposedDecoder {
+  // class ComposedDecoder {
 
-    constructor(decoders) {
-      this.decoders = decoders
-    }
+  //   constructor(decoders) {
+  //     this.decoders = decoders
+  //   }
 
-    or(decoder) {
-      return or(this, decoder)
-    }
+  //   or(decoder) {
+  //     return or(this, decoder)
+  //   }
 
-    decode(input) {
-      const prefix = /** @type {Prefix} */ (input[0])
-      const decoder = this.decoders[prefix]
-      if (decoder) {
-        return decoder.decode(input)
-      } else {
-        throw RangeError(`Unable to decode multibase string ${JSON.stringify(input)}, only inputs prefixed with ${Object.keys(this.decoders)} are supported`)
-      }
-    }
-  }
+  //   decode(input) {
+  //     const prefix = /** @type {Prefix} */ (input[0])
+  //     const decoder = this.decoders[prefix]
+  //     if (decoder) {
+  //       return decoder.decode(input)
+  //     } else {
+  //       throw RangeError(`Unable to decode multibase string ${JSON.stringify(input)}, only inputs prefixed with ${Object.keys(this.decoders)} are supported`)
+  //     }
+  //   }
+  // }
 
   //https://github.com/multiformats/js-multiformats/blob/bb14a29dd823a517ef0c6c741d265e022591d831/src/bases/base.js#L174
-  const or = (left, right) => new ComposedDecoder(/** @type {Decoders<L|R>} */({
-    ...(left.decoders || { [/** @type UnibaseDecoder<L> */(left).prefix]: left }),
-    ...(right.decoders || { [/** @type UnibaseDecoder<R> */(right).prefix]: right })
-  }))
+  // const or = (left, right) => new ComposedDecoder(/** @type {Decoders<L|R>} */({
+  //   ...(left.decoders || { [/** @type UnibaseDecoder<L> */(left).prefix]: left }),
+  //   ...(right.decoders || { [/** @type UnibaseDecoder<R> */(right).prefix]: right })
+  // }))
 
   //https://github.com/multiformats/js-multiformats/blob/bb14a29dd823a517ef0c6c741d265e022591d831/src/bases/base.js#L78
   class Decoder {
@@ -809,45 +809,45 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return typeof value === "string" || value instanceof String;
   };
 
-  var invalidEncoding = "invalid encoding";
-  var s64 = new Array(123);
+  // var invalidEncoding = "invalid encoding";
+  // var s64 = new Array(123);
 
   //https://github.com/protobufjs/protobuf.js/blob/2cdbba32da9951c1ff14e55e65e4a9a9f24c70fd/lib/base64/index.js#L96
-  const base64_decode = function decode(string, buffer, offset) {
-    var start = offset;
-    var j = 0,
-      t;
-    for (var i = 0; i < string.length;) {
-      var c = string.charCodeAt(i++);
-      if (c === 61 && j > 1)
-        break;
-      if ((c = s64[c]) === undefined)
-        throw Error(invalidEncoding);
-      switch (j) {
-        case 0:
-          t = c;
-          j = 1;
-          break;
-        case 1:
-          buffer[offset++] = t << 2 | (c & 48) >> 4;
-          t = c;
-          j = 2;
-          break;
-        case 2:
-          buffer[offset++] = (t & 15) << 4 | (c & 60) >> 2;
-          t = c;
-          j = 3;
-          break;
-        case 3:
-          buffer[offset++] = (t & 3) << 6 | c;
-          j = 0;
-          break;
-      }
-    }
-    if (j === 1)
-      throw Error(invalidEncoding);
-    return offset - start;
-  };
+  // const base64_decode = function decode(string, buffer, offset) {
+  //   var start = offset;
+  //   var j = 0,
+  //     t;
+  //   for (var i = 0; i < string.length;) {
+  //     var c = string.charCodeAt(i++);
+  //     if (c === 61 && j > 1)
+  //       break;
+  //     if ((c = s64[c]) === undefined)
+  //       throw Error(invalidEncoding);
+  //     switch (j) {
+  //       case 0:
+  //         t = c;
+  //         j = 1;
+  //         break;
+  //       case 1:
+  //         buffer[offset++] = t << 2 | (c & 48) >> 4;
+  //         t = c;
+  //         j = 2;
+  //         break;
+  //       case 2:
+  //         buffer[offset++] = (t & 15) << 4 | (c & 60) >> 2;
+  //         t = c;
+  //         j = 3;
+  //         break;
+  //       case 3:
+  //         buffer[offset++] = (t & 3) << 6 | c;
+  //         j = 0;
+  //         break;
+  //     }
+  //   }
+  //   if (j === 1)
+  //     throw Error(invalidEncoding);
+  //   return offset - start;
+  // };
 
   //https://github.com/protobufjs/protobuf.js/blob/2cdbba32da9951c1ff14e55e65e4a9a9f24c70fd/src/writer.js#L172
   function writeByte(val, buf, pos) {
@@ -973,7 +973,6 @@ const { convertCompilerOptionsFromJson } = require('typescript');
 
   //https://github.com/protobufjs/protobuf.js/blob/2cdbba32da9951c1ff14e55e65e4a9a9f24c70fd/src/reader.js#L22
   function Reader(buffer) {
-
     this.buf = buffer;
     this.pos = 0;
     this.len = buffer.length;
@@ -1168,7 +1167,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
   function configure() {
     util_configure();
     Writer._configure(BufferWriter);
-    Reader._configure(BufferReader);
+    // Reader._configure(BufferReader);
   }
 
   configure();
@@ -2233,7 +2232,15 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return CID.parse(cid)
   };
 
-  // test start from here
+  // new code start from here
+
+  /*---------------------------------------------------------------------------------------------
+  *  Copyright (c) 2020 Protocol Labs
+  *  Licensed under the MIT License.
+  *  https://github.com/rvagg/bl/blob/master/LICENSE.md
+  *--------------------------------------------------------------------------------------------*/
+
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L4
   const symbol = Symbol.for('BufferList')
   function BufferList(buf) {
     if (!(this instanceof BufferList)) {
@@ -2243,6 +2250,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     BufferList._init.call(this, buf)
   }
 
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L14
   BufferList._init = function _init(buf) {
     Object.defineProperty(this, symbol, { value: true })
 
@@ -2254,10 +2262,12 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     }
   }
 
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L25
   BufferList.prototype._new = function _new(buf) {
     return new BufferList(buf)
   }
 
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L29
   BufferList.prototype._offset = function _offset(offset) {
     if (offset === 0) {
       return [0, 0]
@@ -2274,6 +2284,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     }
   }
 
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L45
   BufferList.prototype._reverseOffset = function (blOffset) {
     const bufferId = blOffset[0]
     let offset = blOffset[1]
@@ -2285,6 +2296,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return offset
   }
 
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L56
   BufferList.prototype.get = function get(index) {
     if (index > this.length || index < 0) {
       return undefined
@@ -2295,6 +2307,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return this._bufs[offset[0]][offset[1]]
   }
 
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L66
   BufferList.prototype.slice = function slice(start, end) {
     if (typeof start === 'number' && start < 0) {
       start += this.length
@@ -2307,6 +2320,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return this.copy(null, 0, start, end)
   }
 
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L78
   BufferList.prototype.copy = function copy(dst, dstStart, srcStart, srcEnd) {
     if (typeof srcStart !== 'number' || srcStart < 0) {
       srcStart = 0
@@ -2386,6 +2400,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return dst
   }
 
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L157
   BufferList.prototype.shallowSlice = function shallowSlice(start, end) {
     start = start || 0
     end = typeof end !== 'number' ? this.length : end
@@ -2419,10 +2434,12 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return this._new(buffers)
   }
 
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L190
   BufferList.prototype.toString = function toString(encoding, start, end) {
     return this.slice(start, end).toString(encoding)
   }
 
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L194
   BufferList.prototype.consume = function consume(bytes) {
     // first, normalize the argument, in accordance with how Buffer does it
     bytes = Math.trunc(bytes)
@@ -2444,6 +2461,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return this
   }
 
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L215
   BufferList.prototype.duplicate = function duplicate() {
     const copy = this._new()
 
@@ -2453,6 +2471,8 @@ const { convertCompilerOptionsFromJson } = require('typescript');
 
     return copy
   }
+
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L225
   BufferList.prototype.append = function append(buf) {
     if (buf == null) {
       return this
@@ -2483,11 +2503,13 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return this
   }
 
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L255
   BufferList.prototype._appendBuffer = function appendBuffer(buf) {
     this._bufs.push(buf)
     this.length += buf.length
   }
 
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L260
   BufferList.prototype.indexOf = function (search, offset, encoding) {
     if (encoding === undefined && typeof offset === 'string') {
       encoding = offset
@@ -2562,6 +2584,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return -1
   }
 
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L334
   BufferList.prototype._match = function (offset, search) {
     if (this.length - offset < search.length) {
       return false
@@ -2575,6 +2598,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return true
   }
 
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L347
     ; (function () {
       const methods = {
         readDoubleBE: 8,
@@ -2612,34 +2636,40 @@ const { convertCompilerOptionsFromJson } = require('typescript');
       }
     }())
 
-  // Used internally by the class and also as an indicator of this object being
-  // a `BufferList`. It's not possible to use `instanceof BufferList` in a browser
-  // environment because there could be multiple different copies of the
-  // BufferList class and some `BufferList`s might be `BufferList`s.
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L388
   BufferList.prototype._isBufferList = function _isBufferList(b) {
     return b instanceof BufferList || BufferList.isBufferList(b)
   }
 
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L392
   BufferList.isBufferList = function isBufferList(b) {
     return b != null && b[symbol]
   }
-  async function hamtHashFn(buf) {
-    const hash = await multihashing(buf, 'murmur3-128')
+  // async function hamtHashFn(buf) {
+  //   const hash = await multihashing(buf, 'murmur3-128')
 
-    // Multihashing inserts preamble of 2 bytes. Remove it.
-    // Also, murmur3 outputs 128 bit but, accidentally, IPFS Go's
-    // implementation only uses the first 64, so we must do the same
-    // for parity..
-    const justHash = hash.slice(2, 10)
-    const length = justHash.length
-    const result = new Uint8Array(length)
-    // TODO: invert buffer because that's how Go impl does it
-    for (let i = 0; i < length; i++) {
-      result[length - i - 1] = justHash[i]
-    }
+  //   // Multihashing inserts preamble of 2 bytes. Remove it.
+  //   // Also, murmur3 outputs 128 bit but, accidentally, IPFS Go's
+  //   // implementation only uses the first 64, so we must do the same
+  //   // for parity..
+  //   const justHash = hash.slice(2, 10)
+  //   const length = justHash.length
+  //   const result = new Uint8Array(length)
+  //   // TODO: invert buffer because that's how Go impl does it
+  //   for (let i = 0; i < length; i++) {
+  //     result[length - i - 1] = justHash[i]
+  //   }
 
-    return result
-  }
+  //   return result
+  // }
+
+  /*---------------------------------------------------------------------------------------------
+  *  Copyright (c) 2020 Protocol Labs
+  *  Licensed under the MIT and APACHE License
+  *  https://github.com/ipfs/js-ipfs-unixfs/blob/master/LICENSE
+  *--------------------------------------------------------------------------------------------*/
+
+  //https://github.com/ipfs/js-ipfs-unixfs/blob/99a830dadc400df16d1fd3a5e92943d43c09b2d6/packages/ipfs-unixfs-importer/src/chunker/rabin.js#L19
   async function* rabinChunker(source, options) {
     let min, max, avg
 
@@ -2680,6 +2710,8 @@ const { convertCompilerOptionsFromJson } = require('typescript');
       yield chunk
     }
   }
+
+  //https://github.com/ipfs/js-ipfs-unixfs/blob/99a830dadc400df16d1fd3a5e92943d43c09b2d6/packages/ipfs-unixfs-importer/src/chunker/rabin.js#L66
   async function* rabin(source, options) {
     const r = await create(options.bits, options.min, options.max, options.window)
     const buffers = new BufferList()
@@ -2702,6 +2734,8 @@ const { convertCompilerOptionsFromJson } = require('typescript');
       yield buffers.slice(0)
     }
   }
+
+  //https://github.com/ipfs/js-ipfs-unixfs/blob/99a830dadc400df16d1fd3a5e92943d43c09b2d6/packages/ipfs-unixfs-importer/src/chunker/fixed-size.js#L7
   async function* fixedSizeChunker(source, options) {
     let bl = new BufferList()
     let currentLength = 0
@@ -2737,6 +2771,8 @@ const { convertCompilerOptionsFromJson } = require('typescript');
       yield bl.slice(0, currentLength)
     }
   }
+
+  //https://github.com/ipfs/js-ipfs-unixfs/blob/99a830dadc400df16d1fd3a5e92943d43c09b2d6/packages/ipfs-unixfs-importer/src/dag-builder/index.js#L59
   async function* dagBuilder1(source, block, options) {
     for await (const entry of source) {
       if (entry.path) {
@@ -2794,6 +2830,8 @@ const { convertCompilerOptionsFromJson } = require('typescript');
       }
     }
   }
+
+  //https://github.com/ipfs/js-ipfs-unixfs/blob/99a830dadc400df16d1fd3a5e92943d43c09b2d6/packages/ipfs-unixfs-importer/src/dag-builder/validate-chunks.js#L11
   async function* validateChunks(source) {
     for await (const content of source) {
       if (content.length === undefined) {
@@ -2811,11 +2849,20 @@ const { convertCompilerOptionsFromJson } = require('typescript');
       }
     }
   }
+
+  /*---------------------------------------------------------------------------------------------
+  *  Copyright (c) 2020 Protocol Labs
+  *  Licensed under the MIT License.
+  *  https://github.com/multiformats/js-multiformats/blob/master/LICENSE-MIT
+  *--------------------------------------------------------------------------------------------*/
+
+  //https://github.com/multiformats/js-multihashing-async/blob/52b2c2b61a16a94ba0a93548209f85a01cffb5dc/src/index.js#L21
   async function Multihashing(bytes, alg, length) {
     const digest = await Multihashing.digest(bytes, alg, length)
     return multihash.mh_encode(digest, alg, length)
   }
 
+  //https://github.com/multiformats/js-multihash/blob/98ebff7e248bc842fbdfb22b14b58fb9c8679f96/src/constants.js#L18
   const mh_names = Object.freeze({
     'identity': 0x00,
     'sha1': 0x11,
@@ -3170,6 +3217,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     'poseidon-bls12_381-a2-fc1-sc': 0xb402
   })
 
+  //https://github.com/multiformats/js-multihash/blob/98ebff7e248bc842fbdfb22b14b58fb9c8679f96/src/index.js#L13
   const mh_codes = /** @type {import('./types').CodeNameMap} */({})
   for (const key in mh_names) {
     const name = /** @type {HashName} */(key)
@@ -3177,62 +3225,23 @@ const { convertCompilerOptionsFromJson } = require('typescript');
   }
   Object.freeze(mh_codes)
 
-  function createCodec(name, prefix, encode, decode) {
-    return {
-      name,
-      prefix,
-      encoder: {
-        name,
-        prefix,
-        encode
-      },
-      decoder: { decode }
-    };
-  }
-
-  const string = createCodec('utf8', 'u', buf => {
-    const decoder = new TextDecoder('utf8');
-    return 'u' + decoder.decode(buf);
-  }, str => {
-    const encoder = new TextEncoder();
-    return encoder.encode(str.substring(1));
-  });
-
-  var bases = {
-    utf8: string,
-    'utf-8': string,
-    // hex: basics.bases.base16,
-    // latin1: ascii,
-    // ascii: ascii,
-    // binary: ascii,
-    // ...basics.bases
-  };
-
-  function uint8ArrayToString(array, encoding = 'utf8') {
-    const base = bases[encoding];
-    if (!base) {
-      throw new Error(`Unsupported encoding "${encoding}"`);
-    }
-    if ((encoding === 'utf8' || encoding === 'utf-8') && globalThis.Buffer != null && globalThis.Buffer.from != null) {
-      return globalThis.Buffer.from(array.buffer, array.byteOffset, array.byteLength).toString('utf8');
-    }
-    return base.encoder.encode(array).substring(1);
-  }
-
-  function mh_toHexString(hash) {
+   //https://github.com/multiformats/js-multihash/blob/98ebff7e248bc842fbdfb22b14b58fb9c8679f96/src/index.js#L28
+   function mh_toHexString(hash) {
     if (!(hash instanceof Uint8Array)) {
       throw new Error('must be passed a Uint8Array')
     }
-
     return uint8ArrayToString(hash, 'base16')
   }
 
+  //https://github.com/multiformats/js-multihash/blob/98ebff7e248bc842fbdfb22b14b58fb9c8679f96/src/index.js#L42
   function mh_fromHexString(hash) {
     return uint8ArrayFromString(hash, 'base16')
   }
 
+  //https://github.com/multiformats/js-multibase/blob/f3a4e2dd0c0090b44bb0af67336594122ec930e2/src/base.js#L3
   const encodeText = (text) => textEncoder.encode(text)
 
+  //https://github.com/multiformats/js-multibase/blob/f3a4e2dd0c0090b44bb0af67336594122ec930e2/src/base.js#L13
   class Base {
     constructor(name, code, factory, alphabet) {
       this.name = name
@@ -3254,6 +3263,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     }
   }
 
+  //https://github.com/multiformats/js-multibase/blob/f3a4e2dd0c0090b44bb0af67336594122ec930e2/src/rfc4648.js#L104
   const rfc4648_1 = (bitsPerChar) => (alphabet) => {
     return {
       encode(input) {
@@ -3265,6 +3275,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     }
   }
 
+  //https://github.com/multiformats/js-multibase/blob/f3a4e2dd0c0090b44bb0af67336594122ec930e2/src/constants.js#L27
   const constants = [
     // ['identity', '\x00', identity, ''],
     ['base2', '0', rfc4648_1(1), '01'],
@@ -3291,16 +3302,19 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     ['base64urlpad', 'U', rfc4648_1(6), 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_=']
   ]
 
+  //https://github.com/multiformats/js-multibase/blob/f3a4e2dd0c0090b44bb0af67336594122ec930e2/src/constants.js#L54
   const constants1_names = constants.reduce((prev, tupple) => {
     prev[tupple[0]] = new Base(tupple[0], tupple[1], tupple[2], tupple[3])
     return prev
   }, /** @type {Record<BaseName,Base>} */({}))
 
+  //https://github.com/multiformats/js-multibase/blob/f3a4e2dd0c0090b44bb0af67336594122ec930e2/src/constants.js#L59
   const constants1_codes = constants.reduce((prev, tupple) => {
     prev[tupple[1]] = constants1_names[tupple[0]]
     return prev
   }, /** @type {Record<BaseCode,Base>} */({}))
 
+  //https://github.com/multiformats/js-multibase/blob/f3a4e2dd0c0090b44bb0af67336594122ec930e2/src/index.js#L115
   function encoding(nameOrCode) {
     if (Object.prototype.hasOwnProperty.call(constants1_names, /** @type {BaseName} */(nameOrCode))) {
       return constants1_names[/** @type {BaseName} */(nameOrCode)]
@@ -3311,6 +3325,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     }
   }
 
+  //https://github.com/multiformats/js-multibase/blob/f3a4e2dd0c0090b44bb0af67336594122ec930e2/src/util.js#L24
   function concat(arrs, length) {
     const output = new Uint8Array(length)
     let offset = 0
@@ -3323,13 +3338,17 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return output
   }
 
+  //https://github.com/multiformats/js-multibase/blob/f3a4e2dd0c0090b44bb0af67336594122ec930e2/src/util.js#L3
   const textDecoder = new TextDecoder()
   const decodeText = (bytes) => textDecoder.decode(bytes)
+
+  //https://github.com/multiformats/js-multibase/blob/f3a4e2dd0c0090b44bb0af67336594122ec930e2/src/index.js#L103
   function validEncode(name, buf) {
     const enc = encoding(name)
     enc.decode(decodeText(buf))
   }
 
+  //https://github.com/multiformats/js-multibase/blob/f3a4e2dd0c0090b44bb0af67336594122ec930e2/src/index.js#L23
   function multibase(nameOrCode, buf) {
     if (!buf) {
       throw new Error('requires an encoded Uint8Array')
@@ -3340,6 +3359,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return concat([codeBuf, buf], codeBuf.length + buf.length)
   }
 
+  //https://github.com/multiformats/js-multibase/blob/f3a4e2dd0c0090b44bb0af67336594122ec930e2/src/index.js#L42
   function multibase_encode(nameOrCode, buf) {
     const enc = encoding(nameOrCode)
     const data = encodeText(enc.encode(buf))
@@ -3347,6 +3367,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return concat([enc.codeBuf, data], enc.codeBuf.length + data.length)
   }
 
+  //https://github.com/multiformats/js-multibase/blob/f3a4e2dd0c0090b44bb0af67336594122ec930e2/src/index.js#L58
   function multibase_decode(data) {
     if (data instanceof Uint8Array) {
       data = decodeText(data)
@@ -3359,6 +3380,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return enc.decode(data.substring(1))
   }
 
+  //https://github.com/multiformats/js-multihash/blob/98ebff7e248bc842fbdfb22b14b58fb9c8679f96/src/index.js#L52
   function mh_toB58String(hash) {
     if (!(hash instanceof Uint8Array)) {
       throw new Error('must be passed a Uint8Array')
@@ -3366,6 +3388,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return uint8ArrayToString(multibase_encode('base58btc', hash)).slice(1)
   }
 
+  //https://github.com/multiformats/js-multihash/blob/98ebff7e248bc842fbdfb22b14b58fb9c8679f96/src/index.js#L66
   function mh_fromB58String(hash) {
     const encoded = hash instanceof Uint8Array
       ? uint8ArrayToString(hash)
@@ -3374,6 +3397,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return multibase_decode('z' + encoded)
   }
 
+  //https://github.com/multiformats/js-multihash/blob/98ebff7e248bc842fbdfb22b14b58fb9c8679f96/src/index.js#L80
   function mh_decode(bytes) {
     if (!(bytes instanceof Uint8Array)) {
       throw new Error('multihash must be a Uint8Array')
@@ -3407,6 +3431,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     }
   }
 
+  //https://github.com/multiformats/js-multihash/blob/98ebff7e248bc842fbdfb22b14b58fb9c8679f96/src/index.js#L123
   function mh_encode(digest, code, length) {
     if (!digest || code === undefined) {
       throw new Error('multihash encode requires at least two args: digest, code')
@@ -3449,6 +3474,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return uint8ArrayConcat([hash, len, digest], hash.length + len.length + digest.length)
   }
 
+  //https://github.com/multiformats/js-multihash/blob/98ebff7e248bc842fbdfb22b14b58fb9c8679f96/src/index.js#L155
   function mh_coerceCode(name) {
     let code = name
 
@@ -3470,20 +3496,24 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return code
   }
 
+  //https://github.com/multiformats/js-multihash/blob/98ebff7e248bc842fbdfb22b14b58fb9c8679f96/src/index.js#L183
   function mh_isAppCode(code) {
     return code > 0 && code < 0x10
   }
 
+  //https://github.com/multiformats/js-multihash/blob/98ebff7e248bc842fbdfb22b14b58fb9c8679f96/src/index.js#L212
   function mh_validate(multihash) {
     mh_decode(multihash)
   }
 
+  //https://github.com/multiformats/js-multihash/blob/98ebff7e248bc842fbdfb22b14b58fb9c8679f96/src/index.js#L223
   function mh_prefix(multihash) {
     mh_validate(multihash)
 
     return multihash.subarray(0, 2)
   }
 
+  //https://github.com/multiformats/js-multihash/blob/98ebff7e248bc842fbdfb22b14b58fb9c8679f96/src/index.js#L193
   function mh_isValidCode(code) {
     if (mh_isAppCode(code)) {
       return true
@@ -3496,6 +3526,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return false
   }
 
+  //https://github.com/multiformats/js-multihash/blob/98ebff7e248bc842fbdfb22b14b58fb9c8679f96/src/index.js#L229
   const multihash = {
     mh_names,
     mh_codes,
@@ -3512,14 +3543,17 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     mh_isValidCode
   }
 
+  //https://github.com/multiformats/js-multihashing-async/blob/52b2c2b61a16a94ba0a93548209f85a01cffb5dc/src/index.js#L29
   Multihashing.multihash = multihash
 
+  //https://github.com/multiformats/js-multihashing-async/blob/52b2c2b61a16a94ba0a93548209f85a01cffb5dc/src/index.js#L37
   Multihashing.digest = async (bytes, alg, length) => {
     const hash = Multihashing.createHash(alg)
     const digest = await hash(bytes)
     return length ? digest.slice(0, length) : digest
   }
 
+  //https://github.com/multiformats/js-multihashing-async/blob/52b2c2b61a16a94ba0a93548209f85a01cffb5dc/src/index.js#L49
   Multihashing.createHash = function (alg) {
     if (!alg) {
       const e = errcode(new Error('hash algorithm must be specified'), 'ERR_HASH_ALGORITHM_NOT_SPECIFIED')
@@ -3532,14 +3566,11 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return Multihashing.functions[code]
   }
 
+  //https://github.com/multiformats/js-multihashing-async/blob/52b2c2b61a16a94ba0a93548209f85a01cffb5dc/src/sha.js#L21
   const digest = async (data, alg) => {
     switch (alg) {
-      // case 'sha1':
-      //   return crypto.createHash('sha1').update(data).digest()
       case 'sha2-256':
         return createHash('sha256').update(data).digest()
-      // case 'sha2-512':
-      //   return crypto.createHash('sha512').update(data).digest()
       case 'dbl-sha2-256': {
         const first = createHash('sha256').update(data).digest()
         return createHash('sha256').update(first).digest()
@@ -3549,6 +3580,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     }
   }
 
+  //https://github.com/multiformats/js-multihashing-async/blob/52b2c2b61a16a94ba0a93548209f85a01cffb5dc/src/sha.js#L38
   const { factory: sha } = {
     factory: (alg) => async (data) => {
       return digest(data, alg)
@@ -3560,26 +3592,12 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     }
   }
 
+  //https://github.com/multiformats/js-multihashing-async/blob/52b2c2b61a16a94ba0a93548209f85a01cffb5dc/src/crypto.js#L53
   var crypto = {
-    // identity,
-    // sha1: sha('sha1'),
     sha2256: sha('sha2-256'),
-    // sha2512: sha('sha2-512'),
-    // dblSha2256: sha('dbl-sha2-256'),
-    // sha3224: hash('sha3-224'),
-    // sha3256: hash('sha3-256'),
-    // sha3384: hash('sha3-384'),
-    // sha3512: hash('sha3-512'),
-    // shake128: hash('shake-128'),
-    // shake256: hash('shake-256'),
-    // keccak224: hash('keccak-224'),
-    // keccak256: hash('keccak-256'),
-    // keccak384: hash('keccak-384'),
-    // keccak512: hash('keccak-512'),
-    // murmur3128: hash('murmur3-128'),
-    // murmur332: hash('murmur3-32'),
-    // addBlake: blake_1
   }
+
+  //https://github.com/multiformats/js-multihashing-async/blob/52b2c2b61a16a94ba0a93548209f85a01cffb5dc/src/index.js#L69
   Multihashing.functions = {
     // // identity
     // 0x00: crypto.identity,
@@ -3617,10 +3635,52 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     0x56: crypto.dblSha2256
   }
 
+  //https://github.com/multiformats/js-multihashing-async/blob/52b2c2b61a16a94ba0a93548209f85a01cffb5dc/src/index.js#L114
   Multihashing.validate = async (bytes, hash) => {
     const newHash = await Multihashing(bytes, multihash.decode(hash).name)
-
     return equals(hash, newHash)
+  }
+
+  // No license(?)
+  //https://github.com/achingbrain/uint8arrays/blob/56329d16d6ca575c9638f3abb9601b8a034783b8/src/util/bases.js#L15
+  function createCodec(name, prefix, encode, decode) {
+    return {
+      name,
+      prefix,
+      encoder: {
+        name,
+        prefix,
+        encode
+      },
+      decoder: { decode }
+    };
+  }
+
+  //https://github.com/achingbrain/uint8arrays/blob/56329d16d6ca575c9638f3abb9601b8a034783b8/src/util/bases.js#L30
+  const string = createCodec('utf8', 'u', buf => {
+    const decoder = new TextDecoder('utf8');
+    return 'u' + decoder.decode(buf);
+  }, str => {
+    const encoder = new TextEncoder();
+    return encoder.encode(str.substring(1));
+  });
+
+  //https://github.com/achingbrain/uint8arrays/blob/56329d16d6ca575c9638f3abb9601b8a034783b8/src/util/bases.js#L63
+  var bases = {
+    utf8: string,
+    'utf-8': string,
+  };
+
+  //https://github.com/achingbrain/uint8arrays/blob/56329d16d6ca575c9638f3abb9601b8a034783b8/src/to-string.js#L18
+  function uint8ArrayToString(array, encoding = 'utf8') {
+    const base = bases[encoding];
+    if (!base) {
+      throw new Error(`Unsupported encoding "${encoding}"`);
+    }
+    if ((encoding === 'utf8' || encoding === 'utf-8') && globalThis.Buffer != null && globalThis.Buffer.from != null) {
+      return globalThis.Buffer.from(array.buffer, array.byteOffset, array.byteLength).toString('utf8');
+    }
+    return base.encoder.encode(array).substring(1);
   }
 
   const CIDUtil = {
@@ -4431,7 +4491,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
       options.cidVersion = 1
     }
 
-    const multihash = await Multihashing(buffer, options.hashAlg) // buffer is [Uint8Array]
+    const multihash = await Multihashing(buffer, options.hashAlg)
     const cid = new CID_1(options.cidVersion, options.codec, multihash)
 
     if (!options.onlyHash) {
@@ -4948,18 +5008,11 @@ const { convertCompilerOptionsFromJson } = require('typescript');
   }
 
   class SubTree {
-    /**
-     * @param {number} maxDepth
-     * @param {number} layerRepeat
-     * @param {number} [iteration=0]
-     */
     constructor(maxDepth, layerRepeat, iteration = 0) {
       this.maxDepth = maxDepth
       this.layerRepeat = layerRepeat
       this.currentDepth = 1
       this.iteration = iteration
-
-      /** @type {TrickleDagNode} */
       this.root = this.node = this.parent = {
         children: [],
         depth: this.currentDepth,
@@ -4972,33 +5025,20 @@ const { convertCompilerOptionsFromJson } = require('typescript');
       if (!this.root.data) {
         return false
       }
-
       if (this.currentDepth < this.maxDepth && this.node.maxChildren) {
-        // can descend
         this._addNextNodeToParent(this.node)
-
         return false
       }
-
-      // try to find new node from node.parent
       const distantRelative = this._findParent(this.node, this.currentDepth)
-
       if (distantRelative) {
         this._addNextNodeToParent(distantRelative)
-
         return false
       }
-
       return true
     }
 
-    /**
-     * @param {TrickleDagNode} parent
-     */
     _addNextNodeToParent(parent) {
       this.parent = parent
-
-      // find site for new node
       const nextNode = {
         children: [],
         depth: parent.depth + 1,
@@ -5006,56 +5046,30 @@ const { convertCompilerOptionsFromJson } = require('typescript');
         maxDepth: this.maxDepth,
         maxChildren: Math.floor(parent.children.length / this.layerRepeat) * this.layerRepeat
       }
-
-      // @ts-ignore
       parent.children.push(nextNode)
 
       this.currentDepth = nextNode.depth
       this.node = nextNode
     }
-
-    /**
-     *
-     * @param {InProgressImportResult[]} layer
-     */
     append(layer) {
       this.node.data = layer
     }
-
-    /**
-     * @param {Reducer} reduce
-     */
     reduce(reduce) {
       return this._reduce(this.root, reduce)
     }
-
-    /**
-     * @param {TrickleDagNode} node
-     * @param {Reducer} reduce
-     * @returns {Promise<InProgressImportResult>}
-     */
     async _reduce(node, reduce) {
-      /** @type {InProgressImportResult[]} */
       let children = []
 
       if (node.children.length) {
         children = await Promise.all(
           node.children
-            // @ts-ignore
             .filter(child => child.data)
-            // @ts-ignore
             .map(child => this._reduce(child, reduce))
         )
       }
 
       return reduce((node.data || []).concat(children))
     }
-
-    /**
-     * @param {TrickleDagNode} node
-     * @param {number} depth
-     * @returns {TrickleDagNode | undefined}
-     */
     _findParent(node, depth) {
       const parent = node.parent
 
@@ -5064,7 +5078,6 @@ const { convertCompilerOptionsFromJson } = require('typescript');
       }
 
       if (parent.children.length === parent.maxChildren || !parent.maxChildren) {
-        // this layer is full, may be able to traverse to a different branch
         return this._findParent(parent, depth)
       }
 
@@ -5348,10 +5361,6 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return tree
   }
 
-  /**
-   * @param {Dir | InProgressImportResult} tree
-   * @param {BlockAPI} block
-   */
   async function* flushAndYield(tree, block) {
     if (!(tree instanceof Dir)) {
       if (tree && tree.unixfs && tree.unixfs.isDirectory()) {
@@ -5365,7 +5374,6 @@ const { convertCompilerOptionsFromJson } = require('typescript');
   }
 
   async function* treeBuilder1(source, block, options) {
-    /** @type {Dir} */
     let tree = new DirFlat({
       root: true,
       dir: true,
@@ -5426,11 +5434,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
 
   async function* parallelBatch(source, size = 1) {
     for await (const tasks of batch(source, size)) {
-      /** @type {Promise<Success<T>|Failure>[]} */
       const things = tasks.map(
-        /**
-         * @param {() => Promise<T>} p
-         */
         p => {
           return p().then(value => ({ ok: true, value }), err => ({ ok: false, err }))
         })
@@ -5472,21 +5476,11 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     async * flush(block) { }
   }
   class DirFlat extends Dir {
-    /**
-     * @param {DirProps} props
-     * @param {ImporterOptions} options
-     */
     constructor(props, options) {
       super(props, options)
-
-      /** @type {{ [key: string]: InProgressImportResult | Dir }} */
       this._children = {}
     }
 
-    /**
-     * @param {string} name
-     * @param {InProgressImportResult | Dir} value
-     */
     async put(name, value) {
       this.cid = undefined
       this.size = undefined
@@ -5494,9 +5488,6 @@ const { convertCompilerOptionsFromJson } = require('typescript');
       this._children[name] = value
     }
 
-    /**
-     * @param {string} name
-     */
     get(name) {
       return Promise.resolve(this._children[name])
     }
@@ -5526,10 +5517,6 @@ const { convertCompilerOptionsFromJson } = require('typescript');
       }
     }
 
-    /**
-     * @param {BlockAPI} block
-     * @returns {AsyncIterable<ImportResult>}
-     */
     async * flush(block) {
       const children = Object.keys(this._children)
       const links = []
@@ -5560,10 +5547,6 @@ const { convertCompilerOptionsFromJson } = require('typescript');
       const buffer = node.serialize()
       const cid = await persist(buffer, block, this.options)
       const size = buffer.length + node.Links.reduce(
-        /**
-         * @param {number} acc
-         * @param {DAGLink} curr
-         */
         (acc, curr) => acc + curr.Tsize,
         0)
 
@@ -5607,7 +5590,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     hidden: false,
     preload: false,
     timeout: undefined,
-    hamtHashFn,
+    // hamtHashFn,
     hamtHashCode: 0x22,
     hamtBucketBits: 8
   }
@@ -5771,6 +5754,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
 
   const mergeOptions = merge_options.bind({ ignoreUndefined: true })
   
+  //https://github.com/ipfs/js-ipfs-unixfs/blob/99a830dadc400df16d1fd3a5e92943d43c09b2d6/packages/ipfs-unixfs-importer/src/index.js#L30
   async function* importer(source, block, options = {}) {
     const opts = mergeOptions(defaultOptions, options)
 
@@ -5814,6 +5798,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     get: async cid => { throw new Error(`unexpected block API get for ${cid}`) },
     put: async () => { throw new Error('unexpected block API put') }
   }
+
   async function hashFile(content, version, options) {
     
     var options = options || {}

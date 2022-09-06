@@ -2,21 +2,21 @@ import { ICidInfo, hashDir, hashItems, hashContent, hashFile} from '../src/index
 import assert from 'assert';
 import Path from 'path';
 
-// import fs from 'fs';
-// import Hash from 'ipfs-only-hash';
+import fs from 'fs';
+import Hash from 'ipfs-only-hash';
 
-// describe('IPFS (Non zero dependency)', function () {
-//   it('hash text file v0 size 1048577', async () => {
-//     let stream = fs.createReadStream(Path.resolve(__dirname, './1048577.bin'));
-//     let c = await Hash.of(stream, {cidVersion: 0});
-//     assert.strictEqual(c, 'Qmeb988ZjF9Ui6AVPR8Sjg5sAv1B6DauS5rUjCoNs7ftZ1');    
-//   });
-//   it('hash text file v1 size 1048577', async () => {
-//     let stream = fs.createReadStream(Path.resolve(__dirname, './1048577.bin'));
-//     let c = await Hash.of(stream, {cidVersion: 1, rawLeaves: true, maxChunkSize: 1048576}); //match with web3.storage
-//     assert.strictEqual(c, 'bafybeihd4yzq7n5umhjngdum4r6k2to7egxfkf2jz6thvwzf6djus22cmq');    
-//   });  
-// });
+describe('IPFS (Non zero dependency)', function () {
+  it('hash text file v0 size 1048577', async () => {
+    let stream = fs.createReadStream(Path.resolve(__dirname, './1048577.bin'));
+    let c = await Hash.of(stream, {cidVersion: 0});
+    assert.strictEqual(c, 'Qmeb988ZjF9Ui6AVPR8Sjg5sAv1B6DauS5rUjCoNs7ftZ1');    
+  });
+  it('hash text file v1 size 1048577', async () => {
+    let stream = fs.createReadStream(Path.resolve(__dirname, './1048577.bin'));
+    let c = await Hash.of(stream, {cidVersion: 1, rawLeaves: true, maxChunkSize: 1048576}); //match with web3.storage
+    assert.strictEqual(c, 'bafybeihd4yzq7n5umhjngdum4r6k2to7egxfkf2jz6thvwzf6djus22cmq');    
+  });  
+});
 describe('IPFS', function () {
   it('hash items', async function () {
     let data: ICidInfo = {
