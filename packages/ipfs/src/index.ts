@@ -4,7 +4,7 @@
 * https://ijs.network
 *-----------------------------------------------------------*/
 import IPFS from './ipfs.js';
-import { promises as Fs, createReadStream} from 'fs';
+import { promises as Fs, createReadStream } from 'fs';
 import Path from 'path';
 
 export interface ICidInfo {
@@ -28,9 +28,11 @@ export function parse(cid: string): {
     return IPFS.parse(cid);
 };
 export async function hashItems(items?: ICidInfo[], version?: number): Promise<ICidInfo> {
+    console.log('Call hashItems in index.ts')
     return await IPFS.hashItems(items || [], version);
 };
 export async function hashDir(dirPath: string, version?: number): Promise<ICidInfo> {
+    console.log('Call hashDir in index.ts')
     if (version == undefined)
         version = 1;
     let files = await Fs.readdir(dirPath);
@@ -45,7 +47,7 @@ export async function hashDir(dirPath: string, version?: number): Promise<ICidIn
             items.push(result);
         }
         else {
-            try{
+            try {
                 let result = await hashFile(path, version);
                 items.push({
                     cid: result.cid,
@@ -54,7 +56,7 @@ export async function hashDir(dirPath: string, version?: number): Promise<ICidIn
                     type: 'file'
                 })
             }
-            catch(err){
+            catch (err) {
                 console.dir(path)
             }
         }
@@ -68,15 +70,40 @@ export async function hashDir(dirPath: string, version?: number): Promise<ICidIn
         links: items
     };
 };
+// export async function hashDir(dirPath: string, version?: number): Promise<ICidInfo> {
+//     console.log('Call hashDir in index.ts')
+//     if (version == undefined)
+//         version = 1;
+//     console.log('dirPath:', dirPath)
+//     let result = await IPFS.hashDir(dirPath, version);
+//     return {
+//         cid: result.cid,
+//         name: '',
+//         size: result.size,
+//         type: 'dir',
+//         // links: dirPath
+//     };
+// };
 export async function hashContent(content: string | Buffer, version?: number): Promise<string> {
+    console.log('Call hashContent in index.ts')
     if (version == undefined)
         version = 1;
-    // return await IPFS.hashContent(content, version);    
-    if (content.length == 0){
-        return await IPFS.hashContent('', version);  
+    // if (content.length == 0){
+    //     return await IPFS.hashContent('', version);  
+    // }
+    if (content.length == 0) {
+        if (version == 1) {
+            return await IPFS.hashFile('', version, {
+                rawLeaves: true,
+                maxChunkSize: 1048576,
+                maxChildrenPerNode: 1024
+            });
+        } else {
+            return await IPFS.hashFile('', version);
+        }
     }
     let result;
-    if (version == 1){
+    if (version == 1) {
         result = await IPFS.hashFile(content, version, { //match web3.storage default parameters, https://github.com/web3-storage/web3.storage/blob/3f6b6d38de796e4758f1dffffe8cde948d2bb4ac/packages/client/src/lib.js#L113
             rawLeaves: true,
             maxChunkSize: 1048576,
@@ -94,23 +121,28 @@ export async function hashFile(filePath: string, version?: number, options?: {
     maxChunkSize?: number,
     avgChunkSize?: number,
     maxChildrenPerNode?: number
-}): Promise<{cid: string, size: number}> {
+}): Promise<{ cid: string, size: number }> {
+    console.log('Call hashFile in index.ts')
     if (version == undefined)
         version = 1;
     let size: number;
     let stat = await Fs.stat(filePath);
-    size = stat.size;    
+    size = stat.size;
     let file = createReadStream(filePath);
     let cid: string;
     let result;
-    if (size == 0){
-        cid = await IPFS.hashContent('', version);    
-        return {
-            cid,
-            size
-        };
+    if (size == 0) {
+        if (version == 1) {
+            return await IPFS.hashFile('', version, {
+                rawLeaves: true,
+                maxChunkSize: 1048576,
+                maxChildrenPerNode: 1024
+            });
+        } else {
+            return await IPFS.hashFile('', version);
+        }
     }
-    else if (version == 1){
+    else if (version == 1) {
         result = await IPFS.hashFile(file, version, IPFS.mergeOptions({ //match web3.storage default parameters, https://github.com/web3-storage/web3.storage/blob/3f6b6d38de796e4758f1dffffe8cde948d2bb4ac/packages/client/src/lib.js#L113
             rawLeaves: true,
             maxChunkSize: 1048576,
