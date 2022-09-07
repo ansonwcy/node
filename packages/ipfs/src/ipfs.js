@@ -3,7 +3,7 @@
 * Released under dual AGPLv3/commercial license
 * https://ijs.network
 *-----------------------------------------------------------*/
-const { globSource } = require('ipfs-http-client');
+
 const { convertCompilerOptionsFromJson } = require('typescript');
 
 ; (function (globalObject) {
@@ -2164,8 +2164,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
   }
 
   const hashItems = async (items, version) => {
-    console.log('Call hashItems in ipfs.js')
-    const opts = mergeOptions(defaultOptions, { cidVersion: 1, onlyHash: true, rawLeaves: true, maxChunkSize: 1048576 })
+    const opts = mergeOptions(defaultOptions, {cidVersion: 1, onlyHash: true, rawLeaves: true, maxChunkSize: 1048576})
     if (version == undefined)
       version = 1;
     let Links = [];
@@ -2173,7 +2172,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
       let item = items[i];
       Links.push({
         Name: item.name,
-        Hash: parse(item.cid),
+        Hash: parse(item.cid),        
         Tsize: item.size
       })
     };
@@ -2199,7 +2198,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
       //   size: 0,//bytes.length + Links.reduce((acc, curr) => acc + (curr.Tsize == null ? 0 : curr.Tsize), 0),
       //   cid: cid.toString()
       // }
-      const bytes = d_encode(node);
+      const bytes = d_encode(node);      
       const hash = await s_sha256.digest(bytes);
       const dagPB_code = 0x70;
       // const cid = CID.create(version, RAW_CODE, hash);
@@ -2212,40 +2211,39 @@ const { convertCompilerOptionsFromJson } = require('typescript');
       throw e;
     }
   };
-  // const hashContent = async (value, version) => {
-  //   console.log('Call hashContent in ipfs.js')
-  //   try {
-  //     if (version == undefined)
-  //       version = 1;
-  //     if (typeof (value) == 'string')
-  //       value = new TextEncoder("utf-8").encode(value);
+  const hashContent = async (value, version) => {
+    try {
+      if (version == undefined)
+        version = 1;
+      if (typeof (value) == 'string')
+        value = new TextEncoder("utf-8").encode(value);
 
-  //     var cid;
-  //     if (version == 0) {
-  //       const unixFS = new UnixFS({
-  //         type: 'file',
-  //         data: value
-  //       })
-  //       const bytes = d_encode({
-  //         Data: unixFS.marshal(),
-  //         Links: []
-  //       })
-  //       const hash = await s_sha256.digest(bytes);
-  //       cid = CID.create(version, DAG_PB_CODE, hash);
-  //     }
-  //     else {
-  //       const hash = await s_sha256.digest(value);
-  //       if (value.length <= 1048576) //1 MB
-  //         cid = CID.create(version, RAW_CODE, hash)
-  //       else
-  //         cid = CID.create(version, DAG_PB_CODE, hash)
-  //     }
-  //     return cid.toString();
-  //   }
-  //   catch (e) {
-  //     throw e;
-  //   }
-  // };
+      var cid;
+      if (version == 0) {
+        const unixFS = new UnixFS({
+          type: 'file',
+          data: value
+        })
+        const bytes = d_encode({
+          Data: unixFS.marshal(),
+          Links: []
+        })
+        const hash = await s_sha256.digest(bytes);
+        cid = CID.create(version, DAG_PB_CODE, hash);
+      }
+      else {
+        const hash = await s_sha256.digest(value);
+        if (value.length <= 1048576) //1 MB
+          cid = CID.create(version, RAW_CODE, hash)
+        else
+          cid = CID.create(version, DAG_PB_CODE, hash)
+      }
+      return cid.toString();
+    }
+    catch (e) {
+      throw e;
+    }
+  };
   const parse = function (cid) {
     return CID.parse(cid)
   };
@@ -2338,22 +2336,6 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return this.copy(null, 0, start, end)
   }
 
-  function Buffer_alloc(size, fill, encoding) {  // buffer/index.js
-    assertSize(size)
-    if (size <= 0) {
-      return createBuffer(size)
-    }
-    if (fill !== undefined) {
-      // Only pay attention to encoding if it's a string. This
-      // prevents accidentally sending in a number that would
-      // be interpretted as a start offset.
-      return typeof encoding === 'string'
-        ? createBuffer(size).fill(fill, encoding)
-        : createBuffer(tsize).fill(fill)
-    }
-    return createBuffer(size)
-  }
-
   //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L78
   BufferList.prototype.copy = function copy(dst, dstStart, srcStart, srcEnd) {
     if (typeof srcStart !== 'number' || srcStart < 0) {
@@ -2365,11 +2347,11 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     }
 
     if (srcStart >= this.length) {
-      return dst || Buffer_alloc(0)
+      return dst || Buffer.alloc(0)
     }
 
     if (srcEnd <= 0) {
-      return dst || Buffer_alloc(0)
+      return dst || Buffer.alloc(0)
     }
 
     const copy = !!dst
@@ -2632,7 +2614,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return true
   }
 
-    //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L347
+  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L347
     ; (function () {
       const methods = {
         readDoubleBE: 8,
@@ -3259,8 +3241,8 @@ const { convertCompilerOptionsFromJson } = require('typescript');
   }
   Object.freeze(mh_codes)
 
-  //https://github.com/multiformats/js-multihash/blob/98ebff7e248bc842fbdfb22b14b58fb9c8679f96/src/index.js#L28
-  function mh_toHexString(hash) {
+   //https://github.com/multiformats/js-multihash/blob/98ebff7e248bc842fbdfb22b14b58fb9c8679f96/src/index.js#L28
+   function mh_toHexString(hash) {
     if (!(hash instanceof Uint8Array)) {
       throw new Error('must be passed a Uint8Array')
     }
@@ -5787,7 +5769,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
   };
 
   const mergeOptions = merge_options.bind({ ignoreUndefined: true })
-
+  
   //https://github.com/ipfs/js-ipfs-unixfs/blob/99a830dadc400df16d1fd3a5e92943d43c09b2d6/packages/ipfs-unixfs-importer/src/index.js#L30
   async function* importer(source, block, options = {}) {
     const opts = mergeOptions(defaultOptions, options)
@@ -5834,51 +5816,33 @@ const { convertCompilerOptionsFromJson } = require('typescript');
   }
 
   async function hashFile(content, version, options) {
-    console.log('Call hashFile in ipfs.js')
+    
     var options = options || {}
     options.onlyHash = true
     options.cidVersion = version
-
+    
     if (typeof content === 'string') {
       content = new TextEncoder().encode(content)
     }
 
     let lastCid
     let lastSize;
-    for await (const { cid, size } of importer([{ content }], block, options)) {
+    for await (const { cid,size } of importer([{ content }], block, options)) {
       lastCid = cid;
       lastSize = size;
     }
-    return { cid: lastCid.toString(), size: lastSize }
-  };
-  const hashDir = async (path, version) => {
-    console.log('Call hashDir in ipfs.js')
-    let content = path
-    if (version == undefined) { version = 1 }
-    const opts = mergeOptions(defaultOptions, { cidVersion: version, onlyHash: true, rawLeaves: true, maxChunkSize: 1048576 })
-    if (typeof content === 'string') {
-      content = new TextEncoder().encode(content)
-    }
-
-    let lastCid
-    let lastSize;
-    console.log('content:', content)
-    for await (const { cid, size } of importer(content, block, opts)) {
-      lastCid = cid;
-      lastSize = size;
-    }
-    return { cid: lastCid.toString(), size: lastSize }
+    return {cid: lastCid.toString(), size: lastSize}
   };
   // AMD
   if (typeof define == 'function' && define.amd)
-    define('@ijstech/ipfs-utils', function () { return { parse, hashItems, hashFile, hashDir, mergeOptions }; })
+    define('@ijstech/ipfs-utils', function () { return { parse, hashItems, hashContent, hashFile, mergeOptions }; })
   // Node.js
   else if (typeof module != 'undefined' && module.exports)
-    module.exports = { parse, hashItems, hashFile, hashDir, mergeOptions }
+    module.exports = { parse, hashItems, hashContent, hashFile, mergeOptions }
   // Browser
   else {
     if (!globalObject)
       globalObject = typeof self != 'undefined' && self ? self : window;
-    globalObject.IPFSUtils = { parse, hashItems, hashFile, hashDir, mergeOptions };
+    globalObject.IPFSUtils = { parse, hashItems, hashContent, hashFile, mergeOptions };
   };
 })(this);
