@@ -5,6 +5,7 @@
 *-----------------------------------------------------------*/
 
 const { convertCompilerOptionsFromJson } = require('typescript');
+const { globSource } = require('ipfs-http-client'); // npm i ipfs-http-client@51.0.1
 
 ; (function (globalObject) {
   /*---------------------------------------------------------------------------------------------
@@ -2164,7 +2165,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
   }
 
   const hashItems = async (items, version) => {
-    const opts = mergeOptions(defaultOptions, {cidVersion: 1, onlyHash: true, rawLeaves: true, maxChunkSize: 1048576})
+    const opts = mergeOptions(defaultOptions, { cidVersion: 1, onlyHash: true, rawLeaves: true, maxChunkSize: 1048576 })
     if (version == undefined)
       version = 1;
     let Links = [];
@@ -2172,7 +2173,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
       let item = items[i];
       Links.push({
         Name: item.name,
-        Hash: parse(item.cid),        
+        Hash: parse(item.cid),
         Tsize: item.size
       })
     };
@@ -2187,22 +2188,14 @@ const { convertCompilerOptionsFromJson } = require('typescript');
         Data: dirUnixFS.marshal(),
         Links
       };
-      // const buffer = d_encode(node);
 
-      // const cid = await persist(buffer, {
-      //   get: async cid => { throw new Error(`unexpected block API get for ${cid}`) },
-      //   put: async () => { }
-      // }, opts);
-      // console.dir(opts);
-      // return {
-      //   size: 0,//bytes.length + Links.reduce((acc, curr) => acc + (curr.Tsize == null ? 0 : curr.Tsize), 0),
-      //   cid: cid.toString()
-      // }
-      const bytes = d_encode(node);      
+      const bytes = d_encode(node); // will be changed
+
       const hash = await s_sha256.digest(bytes);
       const dagPB_code = 0x70;
-      // const cid = CID.create(version, RAW_CODE, hash);
       const cid = CID.create(version, dagPB_code, hash);
+      console.log('cid', cid)
+      // const cid = new CID_1(version, 'dag-pb', bytes)
       return {
         size: bytes.length + Links.reduce((acc, curr) => acc + (curr.Tsize == null ? 0 : curr.Tsize), 0),
         cid: cid.toString()
@@ -2336,6 +2329,22 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return this.copy(null, 0, start, end)
   }
 
+  function Buffer_alloc(size, fill, encoding) {  // buffer/index.js
+    assertSize(size)
+    if (size <= 0) {
+      return createBuffer(size)
+    }
+    if (fill !== undefined) {
+      // Only pay attention to encoding if it's a string. This
+      // prevents accidentally sending in a number that would
+      // be interpretted as a start offset.
+      return typeof encoding === 'string'
+        ? createBuffer(size).fill(fill, encoding)
+        : createBuffer(tsize).fill(fill)
+    }
+    return createBuffer(size)
+  }
+
   //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L78
   BufferList.prototype.copy = function copy(dst, dstStart, srcStart, srcEnd) {
     if (typeof srcStart !== 'number' || srcStart < 0) {
@@ -2347,11 +2356,11 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     }
 
     if (srcStart >= this.length) {
-      return dst || Buffer.alloc(0)
+      return dst || Buffer_alloc(0)
     }
 
     if (srcEnd <= 0) {
-      return dst || Buffer.alloc(0)
+      return dst || Buffer_alloc(0)
     }
 
     const copy = !!dst
@@ -2614,7 +2623,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return true
   }
 
-  //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L347
+    //https://github.com/rvagg/bl/blob/f7a00711cbf04a20d42f7aebfe2fa948390b9ccd/BufferList.js#L347
     ; (function () {
       const methods = {
         readDoubleBE: 8,
@@ -2834,6 +2843,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
 
         yield () => fileBuilder(file, block, options)
       } else if (entry.path) {
+        console.log('hashing dir')
         const dir = {
           path: entry.path,
           mtime: entry.mtime,
@@ -3241,8 +3251,8 @@ const { convertCompilerOptionsFromJson } = require('typescript');
   }
   Object.freeze(mh_codes)
 
-   //https://github.com/multiformats/js-multihash/blob/98ebff7e248bc842fbdfb22b14b58fb9c8679f96/src/index.js#L28
-   function mh_toHexString(hash) {
+  //https://github.com/multiformats/js-multihash/blob/98ebff7e248bc842fbdfb22b14b58fb9c8679f96/src/index.js#L28
+  function mh_toHexString(hash) {
     if (!(hash instanceof Uint8Array)) {
       throw new Error('must be passed a Uint8Array')
     }
@@ -4847,10 +4857,36 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     }
     return len;
   };
+  function utf8_write(string, buffer, offset) {
+    var start = offset,
+        c1, // character 1
+        c2; // character 2
+    for (var i = 0; i < string.length; ++i) {
+        c1 = string.charCodeAt(i);
+        if (c1 < 128) {
+            buffer[offset++] = c1;
+        } else if (c1 < 2048) {
+            buffer[offset++] = c1 >> 6       | 192;
+            buffer[offset++] = c1       & 63 | 128;
+        } else if ((c1 & 0xFC00) === 0xD800 && ((c2 = string.charCodeAt(i + 1)) & 0xFC00) === 0xDC00) {
+            c1 = 0x10000 + ((c1 & 0x03FF) << 10) + (c2 & 0x03FF);
+            ++i;
+            buffer[offset++] = c1 >> 18      | 240;
+            buffer[offset++] = c1 >> 12 & 63 | 128;
+            buffer[offset++] = c1 >> 6  & 63 | 128;
+            buffer[offset++] = c1       & 63 | 128;
+        } else {
+            buffer[offset++] = c1 >> 12      | 224;
+            buffer[offset++] = c1 >> 6  & 63 | 128;
+            buffer[offset++] = c1       & 63 | 128;
+        }
+    }
+    return offset - start;
+};
   Writer.prototype.string = function write_string(value) {
     var len = utf8_length(value);
     return len
-      ? this.uint32(len)._push(utf8.write, len, value)
+      ? this.uint32(len)._push(utf8_write, len, value)
       : this._push(writeByte, 1, 0);
   };
   function PBLink(p) {
@@ -5377,6 +5413,55 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     return tree
   }
 
+  async function flatToShard (child, dir, threshold, options) {
+    let newDir = dir
+  
+    if (dir instanceof DirFlat && dir.directChildrenCount() >= threshold) {
+      newDir = await convertToShard(dir, options)
+    }
+  
+    const parent = newDir.parent
+  
+    if (parent) {
+      if (newDir !== dir) {
+        if (child) {
+          child.parent = newDir
+        }
+  
+        if (!newDir.parentKey) {
+          throw new Error('No parent key found')
+        }
+  
+        await parent.put(newDir.parentKey, newDir)
+      }
+  
+      return flatToShard(newDir, parent, threshold, options)
+    }
+  
+    // @ts-ignore
+    return newDir
+  }
+
+  async function convertToShard (oldDir, options) {
+    const newDir = new DirSharded({
+      root: oldDir.root,
+      dir: true,
+      parent: oldDir.parent,
+      parentKey: oldDir.parentKey,
+      path: oldDir.path,
+      dirty: oldDir.dirty,
+      flat: false,
+      mtime: oldDir.mtime,
+      mode: oldDir.mode
+    }, options)
+  
+    for await (const { key, child } of oldDir.eachChildSeries()) {
+      await newDir.put(key, child)
+    }
+  
+    return newDir
+  }
+
   async function* flushAndYield(tree, block) {
     if (!(tree instanceof Dir)) {
       if (tree && tree.unixfs && tree.unixfs.isDirectory()) {
@@ -5769,7 +5854,7 @@ const { convertCompilerOptionsFromJson } = require('typescript');
   };
 
   const mergeOptions = merge_options.bind({ ignoreUndefined: true })
-  
+
   //https://github.com/ipfs/js-ipfs-unixfs/blob/99a830dadc400df16d1fd3a5e92943d43c09b2d6/packages/ipfs-unixfs-importer/src/index.js#L30
   async function* importer(source, block, options = {}) {
     const opts = mergeOptions(defaultOptions, options)
@@ -5814,35 +5899,44 @@ const { convertCompilerOptionsFromJson } = require('typescript');
     get: async cid => { throw new Error(`unexpected block API get for ${cid}`) },
     put: async () => { throw new Error('unexpected block API put') }
   }
-
   async function hashFile(content, version, options) {
-    
+
     var options = options || {}
-    options.onlyHash = true
-    options.cidVersion = version
-    
+    options = {cidVersion: 1, rawLeaves: true, maxChunkSize: 1048576, onlyHash: true}
+
     if (typeof content === 'string') {
       content = new TextEncoder().encode(content)
+    } else if (content instanceof Object.getPrototypeOf(Uint8Array)) {
+      content = [{ content }];
     }
 
     let lastCid
     let lastSize;
-    for await (const { cid,size } of importer([{ content }], block, options)) {
+    for await (const { cid, size } of importer( content , block, options)) {
       lastCid = cid;
       lastSize = size;
-    }
-    return {cid: lastCid.toString(), size: lastSize}
+    } 
+    return { cid: lastCid.toString(), size: lastSize }
+  };
+  async function hashDir(directory) {
+
+    options = {cidVersion: 1, rawLeaves: true, maxChunkSize: 1048576, onlyHash: true}
+
+    const files = globSource(directory, { recursive: true });
+    const rootCID = await hashFile(files, null, options);
+    let _links = [];
+    return { cid: rootCID.cid.toString(), links: _links, name: '', size: rootCID.size, type: 'dir'}
   };
   // AMD
   if (typeof define == 'function' && define.amd)
-    define('@ijstech/ipfs-utils', function () { return { parse, hashItems, hashContent, hashFile, mergeOptions }; })
+    define('@ijstech/ipfs-utils', function () { return { parse, hashItems, hashContent, hashFile, hashDir, mergeOptions }; })
   // Node.js
   else if (typeof module != 'undefined' && module.exports)
-    module.exports = { parse, hashItems, hashContent, hashFile, mergeOptions }
+    module.exports = { parse, hashItems, hashContent, hashFile, hashDir, mergeOptions }
   // Browser
   else {
     if (!globalObject)
       globalObject = typeof self != 'undefined' && self ? self : window;
-    globalObject.IPFSUtils = { parse, hashItems, hashContent, hashFile, mergeOptions };
+    globalObject.IPFSUtils = { parse, hashItems, hashContent, hashFile, hashDir, mergeOptions };
   };
 })(this);

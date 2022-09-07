@@ -31,42 +31,43 @@ export async function hashItems(items?: ICidInfo[], version?: number): Promise<I
     return await IPFS.hashItems(items || [], version);
 };
 export async function hashDir(dirPath: string, version?: number): Promise<ICidInfo> {
-    if (version == undefined)
-        version = 1;
-    let files = await Fs.readdir(dirPath);
-    let items = [];
-    for (let i = 0; i < files.length; i++) {
-        let file = files[i];
-        let path = Path.join(dirPath, file);
-        let stat = await Fs.stat(path)
-        if (stat.isDirectory()) {
-            let result = await hashDir(path, version);
-            result.name = file;
-            items.push(result);
-        }
-        else {
-            try{
-                let result = await hashFile(path, version);
-                items.push({
-                    cid: result.cid,
-                    name: file,
-                    size: result.size,
-                    type: 'file'
-                })
-            }
-            catch(err){
-                console.dir(path)
-            }
-        }
-    };
-    let result = await hashItems(items, version);
-    return {
-        cid: result.cid,
-        name: '',
-        size: result.size,
-        type: 'dir',
-        links: items
-    };
+    // if (version == undefined)
+    //     version = 1;
+    // let files = await Fs.readdir(dirPath);
+    // let items = [];
+    // for (let i = 0; i < files.length; i++) {
+    //     let file = files[i];
+    //     let path = Path.join(dirPath, file);
+    //     let stat = await Fs.stat(path)
+    //     if (stat.isDirectory()) {
+    //         let result = await hashDir(path, version);
+    //         result.name = file;
+    //         items.push(result);
+    //     }
+    //     else {
+    //         try{
+    //             let result = await hashFile(path, version);
+    //             items.push({
+    //                 cid: result.cid,
+    //                 name: file,
+    //                 size: result.size,
+    //                 type: 'file'
+    //             })
+    //         }
+    //         catch(err){
+    //             console.dir(path)
+    //         }
+    //     }
+    // };
+    // let result = await hashItems(items, version);
+    // return {
+    //     cid: result.cid,
+    //     name: '',
+    //     size: result.size,
+    //     type: 'dir',
+    //     links: items
+    // };
+    return await IPFS.hashDir(dirPath)
 };
 export async function hashContent(content: string | Buffer, version?: number): Promise<string> {
     if (version == undefined)

@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.hashFile = exports.hashContent = exports.hashDir = exports.hashItems = exports.parse = void 0;
 const ipfs_js_1 = __importDefault(require("./ipfs.js"));
 const fs_1 = require("fs");
-const path_1 = __importDefault(require("path"));
 function parse(cid) {
     return ipfs_js_1.default.parse(cid);
 }
@@ -18,43 +17,7 @@ async function hashItems(items, version) {
 exports.hashItems = hashItems;
 ;
 async function hashDir(dirPath, version) {
-    if (version == undefined)
-        version = 1;
-    let files = await fs_1.promises.readdir(dirPath);
-    let items = [];
-    for (let i = 0; i < files.length; i++) {
-        let file = files[i];
-        let path = path_1.default.join(dirPath, file);
-        let stat = await fs_1.promises.stat(path);
-        if (stat.isDirectory()) {
-            let result = await hashDir(path, version);
-            result.name = file;
-            items.push(result);
-        }
-        else {
-            try {
-                let result = await hashFile(path, version);
-                items.push({
-                    cid: result.cid,
-                    name: file,
-                    size: result.size,
-                    type: 'file'
-                });
-            }
-            catch (err) {
-                console.dir(path);
-            }
-        }
-    }
-    ;
-    let result = await hashItems(items, version);
-    return {
-        cid: result.cid,
-        name: '',
-        size: result.size,
-        type: 'dir',
-        links: items
-    };
+    return await ipfs_js_1.default.hashDir(dirPath);
 }
 exports.hashDir = hashDir;
 ;
